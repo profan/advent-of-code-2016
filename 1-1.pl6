@@ -2,16 +2,6 @@
 
 my $data = slurp "1.input";
 
-sub wrap($v, $min, $max) {
-	if $v > $max {
-		return $min;
-	} elsif $v < $min {
-		return $max;
-	} else {
-		return $v;
-	}
-}
-
 # N, E, S, W
 my @dirs = [%(x => 0, y => -1), %(x => 1, y => 0), %(x => 0, y => 1), %(x => -1, y => 0)];
 my %state = pos => %(x => 0, y => 0), dir => 0;
@@ -21,10 +11,10 @@ for $data.trans(" " => "").split(",") -> $data {
 		when /$<d> = [L|R] $<n> = [\d+]/ {
 			given $<d>.Str {
 				when "L" {
-					%state<dir> = wrap(%state<dir> - 1, 0, 3);
+					%state<dir> = (%state<dir> - 1) % @dirs.elems
 				}
 				when "R" {
-					%state<dir> = wrap(%state<dir> + 1, 0, 3);
+					%state<dir> = (%state<dir> + 1) % @dirs.elems
 				}
 			}
 			for 1..$<n>.Int {
